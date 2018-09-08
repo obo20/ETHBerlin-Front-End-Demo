@@ -264,7 +264,8 @@ class HomePage extends PureComponent {
             eventsGatheredArray: [],
             eventSelectionArray: [],
             addABIDialogOpen: false,
-            ABIInput: []
+            ABIInput: [],
+            validABI: false
         };
 
         this.getEventsToSelect = this.getEventsToSelect.bind(this);
@@ -274,10 +275,15 @@ class HomePage extends PureComponent {
         this.closeABIDialog = this.closeABIDialog.bind(this);
         this.handleABIInputChange = this.handleABIInputChange.bind(this);
         this.handleABIInputSubmit = this.handleABIInputSubmit.bind(this);
+        this.pinConfigToIPFS = this.pinConfigToIPFS.bind(this);
     }
 
-    handleEventInputSelection() {
-
+    handleEventInputSelection(inputIndex) {
+        const tempIndexArray = this.state.eventSelectionArray;
+        tempIndexArray[inputIndex] = !tempIndexArray[inputIndex];
+        this.setState({
+            eventSelectionArray: tempIndexArray
+        });
     }
 
     openABIDialog() {
@@ -289,21 +295,52 @@ class HomePage extends PureComponent {
     }
 
     handleABIInputChange(event) {
-        this.setState({
-            ABIInput: event.target.value
-        });
+        function IsJsonString(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+        if(IsJsonString(event.target.value) === true) {
+            this.setState({
+                ABIInput: event.target.value,
+                validABI: true
+            });
+        } else {
+            this.setState({
+                ABIInput: event.target.value,
+                validABI: false
+            });
+        }
     }
 
     handleABIInputSubmit() {
-        this.getEventsToSelect();
-        this.changeABIDialogState();
+        this.getEventsToSelect(this.state.ABIInput);
+        this.closeABIDialog();
+    }
+
+    pinConfigToIPFS() {
+        const indexLength = this.state.eventSelectionArray.length;
+        const selectedEvents = this.state.eventSelectionArray;
+        const gatheredEvents = this.state.eventsGatheredArray;
+        const configJSON = [];
+        for (let i = 0; i < indexLength; i++) {
+            if(selectedEvents[i] === true) {
+                // const configJSONBase = gatheredEvents.find((event) => {
+                //     return event
+                // });
+                console.log('test');
+            }
+        }
     }
 
     getEventsToSelect(abi) {
-        const abiResponse = testAbi;
+        const parsedABI = JSON.parse(abi);
         const eventsGathered = [];
         let index = 0;
-        abiResponse.forEach((object) => {
+        parsedABI.forEach((object) => {
             if(object.type === 'event') {
                 const newInputs = object.inputs.map((input) => {
                     input.index = index;
@@ -330,17 +367,16 @@ class HomePage extends PureComponent {
                 event.inputs.forEach((input) => {
                     const inputDiv = (
                         <div key={input.index}>
-                            <Checkbox checked={this.state.eventSelectionArray[input.index.selected]} label={`(${input.type}) ${input.name}`} onChange={this.handleEventInputSelection(input.index)} />
+                            <Checkbox checked={this.state.eventSelectionArray[input.index.selected]} label={`(${input.type}) ${input.name}`} onChange={() => this.handleEventInputSelection(input.index)} />
                         </div>
                     );
-                    // const inputDiv = '';
                     inputs.push(inputDiv);
                 });
                 return inputs;
             };
             const eventDiv = (
                 <Card key={event.name} elevation={Elevation.THREE} style={{margin: 10}}>
-                    <div style={{fontSize: 20, fontWeight: 600}}>
+                    <div style={{fontSize: 20, fontWeight: 600, marginBottom: 10}}>
                         {event.name}
                     </div>
                     {getInputs(event)}
@@ -395,22 +431,11 @@ class HomePage extends PureComponent {
                     <Icon icon={"arrow-right"} iconSize={60}/>
                     <Card elevation={Elevation.THREE} style={{width: 500, height: 600, marginTop: 20}}>
                         <div style={{fontSize: 30, fontWeight: 600}}>
-                            UPLOAD YOUR ABI
+                            Pin your config to IPFS
                         </div>
-                        <div style={{height: 3, width: '100%', marginTop: 20, marginBottom: 30, backgroundColor: 'black'}}/>
-                        <div style={{fontSize: 20, fontWeight: 600}}>
-                            EMAIL
-                        </div>
-
-                        <div style={{fontSize: 20, marginTop: 20, fontWeight: 600}}>
-                            PINATA API KEY
-                        </div>
-
-                        <div style={{display: 'flex', alignItems: 'center', fontSize: 20, marginTop: 20, fontWeight: 600}}>
-                            <div>
-                                PINATA SECRET API KEY
-                            </div>
-                        </div>
+                        <Button icon={'document'} intent={'Primary'} onClick={() => this.pinConfigToIPFS()}>
+                            Pin
+                        </Button>
                     </Card>
                     <Icon icon={"arrow-right"} iconSize={60}/>
                     <Card elevation={Elevation.THREE} style={{width: 500, height: 600, marginTop: 20}}>
@@ -436,6 +461,7 @@ class HomePage extends PureComponent {
                 <Dialog
                     title="Enter in your ABI code"
                     isOpen={this.state.addABIDialogOpen}
+                    onClose={this.closeABIDialog}
                     canOutsideClickClose={true}
                     canEscapeKeyClose={true}
                     isCloseButtonShown={true}
@@ -453,9 +479,11 @@ class HomePage extends PureComponent {
                     </div>
                     <div className={Classes.DIALOG_FOOTER}>
                         <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+                            <Button onClick={this.closeABIDialog}>Cancel</Button>
                             <Button
                                 intent={Intent.PRIMARY}
-                                onChange={() => this.handleABIInputSubmit()}
+                                disabled={!this.state.validABI}
+                                onClick={() => this.handleABIInputSubmit()}
                             >
                                 Submit ABI Code
                             </Button>
