@@ -93,7 +93,14 @@ class HomePage extends PureComponent {
     }
 
     getEventsToSelect(abi) {
-        const parsedABI = JSON.parse(abi);
+        let parsedABI = JSON.parse(abi);
+        if (parsedABI.abi) {
+            parsedABI = parsedABI.abi;
+        }
+        if (!Array.isArray(parsedABI)) {
+            throw new Error('Invalid ABI');
+        }
+
         const eventsGathered = [];
         let index = 0;
         parsedABI.forEach((object) => {
