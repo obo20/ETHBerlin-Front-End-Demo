@@ -30,7 +30,7 @@ class HomePage extends PureComponent {
     }
 
     handleEventInputSelection(inputIndex) {
-        const tempIndexArray = this.state.eventSelectionArray;
+        const tempIndexArray = this.state.eventSelectionArray.slice();
         tempIndexArray[inputIndex] = !tempIndexArray[inputIndex];
         this.setState({
             eventSelectionArray: tempIndexArray
@@ -77,6 +77,7 @@ class HomePage extends PureComponent {
         const gatheredEvents = this.state.eventsGatheredArray;
         const configJSON = [];
         gatheredEvents.forEach((event) => {
+            let numSelected = 0;
             const eventConfig = {
                 name: event.name,
                 params: []
@@ -88,8 +89,15 @@ class HomePage extends PureComponent {
                     "indexed": input.indexed,
                     "selected": selectedEvents[input.index] || false
                 });
+
+                if (selectedEvents[input.index]) {
+                    numSelected++;
+                }
             });
-            configJSON.push(eventConfig);
+
+            if (numSelected > 0) {
+                configJSON.push(eventConfig);
+            }
         });
         return configJSON;
     }
@@ -126,7 +134,8 @@ class HomePage extends PureComponent {
         });
 
         this.setState({
-           eventsGatheredArray: eventsGathered
+           eventsGatheredArray: eventsGathered,
+           eventSelectionArray: new Array(index).fill(false),
         });
     }
 
@@ -204,7 +213,7 @@ class HomePage extends PureComponent {
                         <div style={{fontSize: 30, fontWeight: 600}}>
                             Pin your config to IPFS
                         </div>
-                        <Button icon={'document'} intent={'Primary'} onClick={() => this.pinConfigToIPFS()}>
+                        <Button icon="document" intent="Primary" onClick={() => this.pinConfigToIPFS()} disabled={this.state.eventSelectionArray.filter(e => e).length == 0}>
                             Pin
                         </Button>
                     </Card>
