@@ -2,10 +2,53 @@ import React, { PureComponent } from "react";
 import ReactSVG from "react-svg";
 import PinataSVG from "./../images/pinataSVG.svg";
 import PinataReverseSVG from "./../images/PinataReverseSVG.svg";
+import EthereumSVG from "./../images/EthereumLogo.svg";
+import InfuraLogo from "./../images/infura.png";
+import AzureLogo from "./../images/azure.png";
+
 import { Button, Card, Checkbox, Classes, Dialog, Elevation, Icon, Intent, TextArea } from "@blueprintjs/core";
 import { pinJSONToIPFS } from "../apiCalls/pinToIPFS";
 import Web3 from 'web3';
 import SubmitSection from '../components/SubmitSection';
+
+const demoProviders = [
+    {
+        id: 0,
+        name: `Pinata Official`,
+        address: 'temporary address',
+        uptime: '99.99%',
+        location: 'Germany',
+        costPerGB: '.02 ETH',
+        currentStorage: '30.4TB'
+    },
+    {
+        id: 1,
+        name: `Infura`,
+        address: 'temporary address',
+        uptime: '99.98%',
+        location: 'Australia',
+        costPerGB: '.02 ETH',
+        currentStorage: '10.2GB'
+    },
+    {
+        id: 2,
+        name: 'EthPinners',
+        address: 'temporary address 2',
+        uptime: '92.36%',
+        location: 'Canada',
+        costPerGB: '.01 ETH',
+        currentStorage: '6.4TB'
+    },
+    {
+        id: 3,
+        name: 'Azure',
+        address: 'temporary address 2',
+        uptime: '99.99%',
+        location: 'USA',
+        costPerGB: '.02 ETH',
+        currentStorage: '20.4TB'
+    }
+];
 
 class HomePage extends PureComponent {
     constructor(props) {
@@ -17,6 +60,7 @@ class HomePage extends PureComponent {
             ABIInput: [],
             validABI: false,
             hash: null,
+            providersSelected: []
         };
 
         this.getEventsToSelect = this.getEventsToSelect.bind(this);
@@ -27,6 +71,8 @@ class HomePage extends PureComponent {
         this.handleABIInputChange = this.handleABIInputChange.bind(this);
         this.handleABIInputSubmit = this.handleABIInputSubmit.bind(this);
         this.pinConfigToIPFS = this.pinConfigToIPFS.bind(this);
+        this.getProviders = this.getProviders.bind(this);
+        this.providerToggled = this.providerToggled.bind(this);
     }
 
     handleEventInputSelection(inputIndex) {
@@ -179,6 +225,102 @@ class HomePage extends PureComponent {
         )
     }
 
+    providerToggled(provider) {
+        const temp = this.state.providersSelected.slice();
+        temp[provider.id] = !this.state.providersSelected[provider.id];
+        this.setState({
+            providersSelected: temp
+        });
+    }
+
+    getProviders() {
+        let pinataColor = (this.state.providersSelected[0] === true) ? 'rgb(0, 255, 255, 0.5)' : 'white';
+        const infuraColor = this.state.providersSelected[1] ? 'rgb(0, 255, 255, 0.5)' : 'white';
+        const ethPinnersColor = this.state.providersSelected[2] ? 'rgb(0, 255, 255, 0.5)' : 'white';
+        const azureColor = this.state.providersSelected[3] ? 'rgb(0, 255, 255, 0.5)' : 'white';
+        const imageHeight = '65px';
+        return (
+            <div style={{overflow: 'scroll'}}>
+                <Card elevation={Elevation.THREE} interactive={true} style={{display: 'flex', alignItems: 'center', backgroundColor: pinataColor, margin: 10}} onClick={() => this.providerToggled(demoProviders[0])}>
+                    <div style={{width: 100}}>
+                        <ReactSVG src={PinataSVG} svgStyle={{height: imageHeight, width: imageHeight}}/>
+                    </div>
+                    <div style={{width: '100%'}}>
+                        <div style={{fontSize: 20, fontWeight: 600}}>Pinata Official Pinning Service</div>
+                        <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 10, fontWeight: 600}}>
+                            <div style={{width: 75}}>
+                                Germany
+                            </div>
+                            <div>
+                                99.99% Uptime
+                            </div>
+                            <div>
+                                .02 ETH / GB
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+                <Card elevation={Elevation.THREE} interactive={true} style={{display: 'flex', alignItems: 'center', backgroundColor: infuraColor, margin: 10}} onClick={() => this.providerToggled(demoProviders[1])}>
+                    <div style={{width: 100}}>
+                        <img src={InfuraLogo} width={imageHeight} height={imageHeight}/>
+                    </div>
+                    <div style={{width: '100%'}}>
+                        <div style={{fontSize: 20, fontWeight: 600}}>Infura Pinning Service</div>
+                        <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 10, fontWeight: 600}}>
+                            <div style={{width: 75}}>
+                                USA
+                            </div>
+                            <div>
+                                99.98% Uptime
+                            </div>
+                            <div>
+                                .02 ETH / GB
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+                <Card elevation={Elevation.THREE} interactive={true} style={{display: 'flex', alignItems: 'center', backgroundColor: ethPinnersColor, margin: 10}} onClick={() => this.providerToggled(demoProviders[2])}>
+                    <div style={{width: 100}}>
+                        <ReactSVG src={EthereumSVG} svgStyle={{height: imageHeight, width: imageHeight}}/>
+                    </div>
+                    <div style={{width: '100%'}}>
+                        <div style={{fontSize: 20, fontWeight: 600}}>ETHPinners Pinning Service</div>
+                        <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 10, fontWeight: 600}}>
+                            <div style={{width: 75}}>
+                                Canada
+                            </div>
+                            <div>
+                                92.36% Uptime
+                            </div>
+                            <div>
+                                .01 ETH / GB
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+                <Card elevation={Elevation.THREE} interactive={true} style={{display: 'flex', alignItems: 'center', backgroundColor: azureColor, margin: 10}} onClick={() => this.providerToggled(demoProviders[3])}>
+                    <div style={{width: 100}}>
+                        <img src={AzureLogo} width={imageHeight} height={imageHeight}/>
+                    </div>
+                    <div style={{width: '100%'}}>
+                        <div style={{fontSize: 20, fontWeight: 600}}>Azure Official Pinning Service</div>
+                        <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 10, fontWeight: 600}}>
+                            <div style={{width: 75}}>
+                                USA
+                            </div>
+                            <div>
+                                99.99% Uptime
+                            </div>
+                            <div>
+                                .02 ETH / GB
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+            </div>
+        )
+    }
+
     render() {
         return (
             <div>
@@ -209,13 +351,12 @@ class HomePage extends PureComponent {
                         </div>
                     </Card>
                     <Icon icon={"arrow-right"} iconSize={60}/>
-                    <Card elevation={Elevation.THREE} style={{width: 500, height: 600, marginTop: 20}}>
+                    <Card elevation={Elevation.THREE} style={{width: 500, height: 600, marginTop: 20, overflow: 'scroll'}}>
                         <div style={{fontSize: 30, fontWeight: 600}}>
-                            Pin your config to IPFS
+                            SELECT YOUR HOSTS
                         </div>
-                        <Button icon="document" intent="Primary" onClick={() => this.pinConfigToIPFS()} disabled={this.state.eventSelectionArray.filter(e => e).length == 0}>
-                            Pin
-                        </Button>
+                        <div style={{height: 3, width: '100%', marginTop: 20, marginBottom: 30, backgroundColor: 'black'}}/>
+                        {this.getProviders()}
                     </Card>
                     <Icon icon={"arrow-right"} iconSize={60}/>
                     <Card elevation={Elevation.THREE} style={{width: 500, height: 600, marginTop: 20}}>
