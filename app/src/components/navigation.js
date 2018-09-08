@@ -31,9 +31,6 @@ class Navigation extends React.Component {
                                         </div>
                                     </div>
                                 </div>
-                                <div style={{color: 'black'}}>
-                                    {pageName}
-                                </div>
                                 <div  style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
                                     <div style={{cursor: 'pointer'}}>
                                         <button className="bp3-button bp3-minimal" onClick={() => setPage('Home')} style={{fontSize: 20, fontFamily: 'Abel', fontWeight: 600}}>Home</button>

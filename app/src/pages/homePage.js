@@ -3,6 +3,7 @@ import ReactSVG from "react-svg";
 import PinataSVG from "./../images/pinataSVG.svg";
 import PinataReverseSVG from "./../images/PinataReverseSVG.svg";
 import { Button, Card, Checkbox, Classes, Dialog, Elevation, Icon, Intent, TextArea } from "@blueprintjs/core";
+import { pinJSONToIPFS } from "../apiCalls/pinToIPFS";
 import Web3 from 'web3';
 
 class HomePage extends PureComponent {
@@ -70,7 +71,6 @@ class HomePage extends PureComponent {
     }
 
     pinConfigToIPFS() {
-        const indexLength = this.state.eventSelectionArray.length;
         const selectedEvents = this.state.eventSelectionArray;
         const gatheredEvents = this.state.eventsGatheredArray;
         const configJSON = [];
@@ -89,7 +89,9 @@ class HomePage extends PureComponent {
             });
             configJSON.push(eventConfig);
         });
-        console.log(configJSON);
+        pinJSONToIPFS(configJSON).then((result) => {
+            console.log(result);
+        });
     }
 
     getEventsToSelect(abi) {
