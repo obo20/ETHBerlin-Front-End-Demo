@@ -5,6 +5,7 @@ import PinataReverseSVG from "./../images/PinataReverseSVG.svg";
 import { Button, Card, Checkbox, Classes, Dialog, Elevation, Icon, Intent, TextArea } from "@blueprintjs/core";
 import { pinJSONToIPFS } from "../apiCalls/pinToIPFS";
 import Web3 from 'web3';
+import SubmitSection from '../components/SubmitSection';
 
 class HomePage extends PureComponent {
     constructor(props) {
@@ -14,7 +15,8 @@ class HomePage extends PureComponent {
             eventSelectionArray: [],
             addABIDialogOpen: false,
             ABIInput: [],
-            validABI: false
+            validABI: false,
+            hash: null,
         };
 
         this.getEventsToSelect = this.getEventsToSelect.bind(this);
@@ -70,7 +72,7 @@ class HomePage extends PureComponent {
         this.closeABIDialog();
     }
 
-    pinConfigToIPFS() {
+    getConfig() {
         const selectedEvents = this.state.eventSelectionArray;
         const gatheredEvents = this.state.eventsGatheredArray;
         const configJSON = [];
@@ -89,9 +91,13 @@ class HomePage extends PureComponent {
             });
             configJSON.push(eventConfig);
         });
-        pinJSONToIPFS(configJSON).then((result) => {
-            console.log(result);
-        });
+        return configJSON;
+    }
+
+    async pinConfigToIPFS() {
+        const configJSON = this.getConfig();
+        const response = await pinJSONToIPFS(configJSON);
+        this.setState({ hash: response.data.IpfsHash });
     }
 
     getEventsToSelect(abi) {
@@ -204,23 +210,7 @@ class HomePage extends PureComponent {
                     </Card>
                     <Icon icon={"arrow-right"} iconSize={60}/>
                     <Card elevation={Elevation.THREE} style={{width: 500, height: 600, marginTop: 20}}>
-                        <div style={{fontSize: 30, fontWeight: 600}}>
-                            UPLOAD YOUR ABI
-                        </div>
-                        <div style={{height: 3, width: '100%', marginTop: 20, marginBottom: 30, backgroundColor: 'black'}}/>
-                        <div style={{fontSize: 20, fontWeight: 600}}>
-                            EMAIL
-                        </div>
-
-                        <div style={{fontSize: 20, marginTop: 20, fontWeight: 600}}>
-                            PINATA API KEY
-                        </div>
-
-                        <div style={{display: 'flex', alignItems: 'center', fontSize: 20, marginTop: 20, fontWeight: 600}}>
-                            <div>
-                                PINATA SECRET API KEY
-                            </div>
-                        </div>
+                        <SubmitSection clientAddress={0} hash={this.state.hash} config={this.getConfig()}  />
                     </Card>
                 </div>
                 <Dialog
