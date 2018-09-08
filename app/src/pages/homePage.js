@@ -5,258 +5,6 @@ import PinataReverseSVG from "./../images/PinataReverseSVG.svg";
 import { Button, Card, Checkbox, Classes, Dialog, Elevation, Icon, Intent, TextArea } from "@blueprintjs/core";
 import Web3 from 'web3';
 
-const testAbi = [
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_contract",
-                "type": "address"
-            },
-            {
-                "name": "_client",
-                "type": "address"
-            }
-        ],
-        "name": "fundContractToClient",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_contract",
-                "type": "address"
-            }
-        ],
-        "name": "withdrawContractToClientFunds",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "_client",
-                "type": "address"
-            }
-        ],
-        "name": "getClientWatchedContractsArray",
-        "outputs": [
-            {
-                "name": "",
-                "type": "address[]"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "_client",
-                "type": "address"
-            }
-        ],
-        "name": "getClientName",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_client",
-                "type": "address"
-            },
-            {
-                "name": "_contract",
-                "type": "address"
-            },
-            {
-                "name": "_configHash",
-                "type": "string"
-            }
-        ],
-        "name": "registerContractToClient",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_clientName",
-                "type": "string"
-            }
-        ],
-        "name": "registerAsClient",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_contractName",
-                "type": "string"
-            }
-        ],
-        "name": "registerAsContract",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "_contract",
-                "type": "address"
-            },
-            {
-                "name": "_client",
-                "type": "address"
-            }
-        ],
-        "name": "getContractToClientBalance",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "_contract",
-                "type": "address"
-            }
-        ],
-        "name": "getContractName",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "name": "_contract",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "name": "_client",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "name": "paymentAmount",
-                "type": "uint256"
-            }
-        ],
-        "name": "ClientContractFunded",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "name": "_client",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "name": "_name",
-                "type": "string"
-            }
-        ],
-        "name": "ClientRegistered",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "name": "_contract",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "name": "_name",
-                "type": "string"
-            }
-        ],
-        "name": "ContractRegistered",
-        "type": "event"
-    }
-];
-
 class HomePage extends PureComponent {
     constructor(props) {
         super(props);
@@ -326,14 +74,22 @@ class HomePage extends PureComponent {
         const selectedEvents = this.state.eventSelectionArray;
         const gatheredEvents = this.state.eventsGatheredArray;
         const configJSON = [];
-        for (let i = 0; i < indexLength; i++) {
-            if(selectedEvents[i] === true) {
-                // const configJSONBase = gatheredEvents.find((event) => {
-                //     return event
-                // });
-                console.log('test');
-            }
-        }
+        gatheredEvents.forEach((event) => {
+            const eventConfig = {
+                name: event.name,
+                params: []
+            };
+            event.inputs.forEach((input)=> {
+                eventConfig.params.push({
+                    "type": input.type,
+                    "name": input.name,
+                    "indexed": input.indexed,
+                    "selected": selectedEvents[input.index] || false
+                });
+            });
+            configJSON.push(eventConfig);
+        });
+        console.log(configJSON);
     }
 
     getEventsToSelect(abi) {
