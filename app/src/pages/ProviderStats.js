@@ -7,36 +7,45 @@ class ProviderStats extends PureComponent {
     }
 
     getRows = () => {
-        const rowList = [
+        const demoProviders = [
             {
-                id: 1,
+                id: 0,
                 name: `Pinata Official`,
                 address: 'temporary address',
                 uptime: '99.99%',
                 location: 'Germany',
-                costPerGB: '.01 ETH',
-                currentStorage: '582.3GB'
+                costPerGB: '.02 ETH',
+                currentStorage: '30.4TB'
+            },
+            {
+                id: 1,
+                name: `Infura`,
+                address: '0x0000000000000000000000000000000000000000',
+                uptime: '99.98%',
+                location: 'Australia',
+                costPerGB: '.02 ETH',
+                currentStorage: '10.2GB'
             },
             {
                 id: 2,
-                name: `Pins "R" Us`,
-                address: 'temporary address',
-                uptime: '99.98%',
-                location: 'Australia',
-                costPerGB: '.01 ETH',
-                currentStorage: '51.4GB'
-            },
-            {
-                id: 3,
-                name: 'Pin World',
-                address: 'temporary address 2',
+                name: 'EthPinners',
+                address: '0x0000000000000000000000000000000000000000',
                 uptime: '92.36%',
                 location: 'Canada',
                 costPerGB: '.01 ETH',
-                currentStorage: '25.4GB'
+                currentStorage: '6.4TB'
+            },
+            {
+                id: 3,
+                name: 'Azure',
+                address: '0x0000000000000000000000000000000000000000',
+                uptime: '99.99%',
+                location: 'USA',
+                costPerGB: '.02 ETH',
+                currentStorage: '20.4TB'
             }
         ];
-        return rowList.map((client) => {
+        return demoProviders.map((client) => {
             return (
                 <tr key={client.id}>
                     <td style={{height: 50, verticalAlign: 'middle', fontSize: 18}}>

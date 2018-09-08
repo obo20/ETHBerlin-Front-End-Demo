@@ -6,11 +6,6 @@ import abi from '../abi/PinataHub.json';
 
 
 export default class SubmitSection extends React.Component {
-  // Proptypes:
-  //  clientAddress: String
-  //  hash: String
-  //  config: Object
-
   state = {
     hasWeb3: false,
     contractAddress: '',
@@ -23,10 +18,6 @@ export default class SubmitSection extends React.Component {
 
   web3 = null;
   PinataHub = null;
-
-  constructor() {
-    super();
-  }
 
   async componentDidMount() {
     if (!window.web3) {

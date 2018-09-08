@@ -1,6 +1,4 @@
 import React from 'react';
-import Navigation from "./components/navigation";
-
 export const NavigationContext = React.createContext('home');
 
 export class NavigationProvider extends React.Component {

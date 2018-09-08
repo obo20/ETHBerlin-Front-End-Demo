@@ -8,7 +8,6 @@ import AzureLogo from "./../images/azure.png";
 
 import { Button, Card, Checkbox, Classes, Dialog, Elevation, Icon, Intent, TextArea } from "@blueprintjs/core";
 import { pinJSONToIPFS } from "../apiCalls/pinToIPFS";
-import Web3 from 'web3';
 import SubmitSection from '../components/SubmitSection';
 
 const demoProviders = [
@@ -24,7 +23,7 @@ const demoProviders = [
     {
         id: 1,
         name: `Infura`,
-        address: 'temporary address',
+        address: '0x0000000000000000000000000000000000000000',
         uptime: '99.98%',
         location: 'Australia',
         costPerGB: '.02 ETH',
@@ -33,7 +32,7 @@ const demoProviders = [
     {
         id: 2,
         name: 'EthPinners',
-        address: 'temporary address 2',
+        address: '0x0000000000000000000000000000000000000000',
         uptime: '92.36%',
         location: 'Canada',
         costPerGB: '.01 ETH',
@@ -42,7 +41,7 @@ const demoProviders = [
     {
         id: 3,
         name: 'Azure',
-        address: 'temporary address 2',
+        address: '0x0000000000000000000000000000000000000000',
         uptime: '99.99%',
         location: 'USA',
         costPerGB: '.02 ETH',

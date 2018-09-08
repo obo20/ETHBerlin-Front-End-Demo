@@ -1,16 +1,9 @@
 import React from 'react';
 import ReactSVG from 'react-svg'
 import PinataSVG from './../images/pinataSVG.svg'
-import { Icon, Menu, MenuItem, Popover, PopoverInteractionKind, Position } from "@blueprintjs/core";
-import { PinataBlue, PinataPurple, PinataYellow }from './../theme.js';
 import { NavigationContext } from './../contexts';
 
 class Navigation extends React.Component {
-
-    constructor() {
-        super();
-    }
-
     render() {
         return (
             <NavigationContext.Consumer>
