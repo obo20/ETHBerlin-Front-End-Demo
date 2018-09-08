@@ -28,13 +28,14 @@ export default class SubmitSection extends React.Component {
     super();
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     if (!window.web3) {
       return;
     }
     this.web3 = new Web3(window.web3.currentProvider);
-    this.PinataHub = contract(abi);
-    this.PinataHub.setProvider(window.web3.currentProvider);
+    const _PinataHub = contract(abi);
+    _PinataHub.setProvider(window.web3.currentProvider);
+    this.PinataHub = await _PinataHub.deployed();
 
     this.setState({ hasWeb3: true });
     this.updateClientName();
@@ -80,6 +81,11 @@ export default class SubmitSection extends React.Component {
     })
   }
 
+  async register() {
+    const receipt = await this.PinataHub.registerContractToClient(this.props.clientAddress, this.state.contractAddress, this.props.hash);
+    console.log(receipt);
+  }
+
   render() {
     const { isAddress, isContract, clientName, loadedLogs, numLogs } = this.state;
 
@@ -94,7 +100,11 @@ export default class SubmitSection extends React.Component {
         <div>
           <label>
             Contract Address {}
-            <input value={this.state.contractAddress} onChange={e => this.changeAddress(e.target.value)} />
+            <input
+              value={this.state.contractAddress}
+              onChange={e => this.changeAddress(e.target.value)}
+              disabled={!this.props.hash}
+            />
             {isAddress && isContract ? (
               <div>
                 {loadedLogs ? `Found ${numLogs} files to pin` : 'Loading...'}
@@ -107,7 +117,7 @@ export default class SubmitSection extends React.Component {
         </div>
 
         <div>
-          <Button disabled={!isAddress || !isContract}>
+          <Button disabled={!isAddress || !isContract} onClick={() => this.register()}>
             Register
             {clientName && clientName.length && ` with ${clientName}`}
           </Button>
