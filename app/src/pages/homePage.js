@@ -59,7 +59,7 @@ class HomePage extends PureComponent {
             ABIInput: [],
             validABI: false,
             hash: null,
-            providersSelected: []
+            providersSelected: undefined
         };
 
         this.getEventsToSelect = this.getEventsToSelect.bind(this);
@@ -225,18 +225,23 @@ class HomePage extends PureComponent {
     }
 
     providerToggled(provider) {
-        const temp = this.state.providersSelected.slice();
-        temp[provider.id] = !this.state.providersSelected[provider.id];
+        // const temp = this.state.providersSelected.slice();
+        //temporary solution to mandate 1 provider, but will remove to expand to multiple providers per wizard walkthrough soon
+        // temp[0] = false;
+        // temp[1] = false;
+        // temp[2] = false;
+        // temp[3] = false;
+        // temp[provider.id] = !this.state.providersSelected[provider.id];
         this.setState({
-            providersSelected: temp
+            providersSelected: provider.id
         });
     }
 
     getProviders() {
-        let pinataColor = (this.state.providersSelected[0] === true) ? 'rgb(0, 255, 255, 0.5)' : 'white';
-        const infuraColor = this.state.providersSelected[1] ? 'rgb(0, 255, 255, 0.5)' : 'white';
-        const ethPinnersColor = this.state.providersSelected[2] ? 'rgb(0, 255, 255, 0.5)' : 'white';
-        const azureColor = this.state.providersSelected[3] ? 'rgb(0, 255, 255, 0.5)' : 'white';
+        let pinataColor = (this.state.providersSelected === 0) ? 'rgb(0, 255, 255, 0.5)' : 'white';
+        const infuraColor = this.state.providersSelected === 1 ? 'rgb(0, 255, 255, 0.5)' : 'white';
+        const ethPinnersColor = this.state.providersSelected === 2 ? 'rgb(0, 255, 255, 0.5)' : 'white';
+        const azureColor = this.state.providersSelected === 3 ? 'rgb(0, 255, 255, 0.5)' : 'white';
         const imageHeight = '65px';
         return (
             <div style={{overflow: 'scroll'}}>
