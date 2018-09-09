@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from './../config.json';
+import { AppToaster } from './../utils/Toaster';
 
 export const pinJSONToIPFS = (JSONBody) => {
     const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
@@ -14,6 +15,10 @@ export const pinJSONToIPFS = (JSONBody) => {
                 }
             }
         ).then(function (response) {
+            AppToaster.show({
+                message: 'Successfully uploaded config to IPFS!',
+                intent: 'success'
+            });
             return response;
         })
         .catch(function (error) {

@@ -88,6 +88,7 @@ export default class SubmitSection extends React.Component {
   async loadPastHashes() {
     const signatures = this.props.config.map(event => this.getSignature(event));
     const logs = await this.web3.eth.getPastLogs({
+      fromBlock: 1,
       address: this.state.contractAddress,
       topics: [signatures],
     });

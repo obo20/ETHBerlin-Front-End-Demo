@@ -346,7 +346,10 @@ class HomePage extends PureComponent {
                                 UPLOAD YOUR ABI
                             </div>
                             <Button icon={'document'} intent={'Primary'} onClick={() => this.openABIDialog()}>
-                                Upload
+                                Import
+                            </Button>
+                            <Button disabled={this.state.eventsGatheredArray.length == 0} icon={'document'} intent={'Primary'} onClick={() => this.pinConfigToIPFS()}>
+                                Confirm
                             </Button>
                         </div>
                         <div style={{height: 3, width: '100%', marginTop: 20, marginBottom: 30, backgroundColor: 'black'}}/>
