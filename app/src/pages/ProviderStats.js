@@ -11,7 +11,7 @@ class ProviderStats extends PureComponent {
             {
                 id: 0,
                 name: `Pinata Official`,
-                address: 'temporary address',
+                address: '0x0000000000000000000000000000000000001337',
                 uptime: '99.99%',
                 location: 'Germany',
                 costPerGB: '.02 ETH',

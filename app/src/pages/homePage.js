@@ -333,7 +333,7 @@ class HomePage extends PureComponent {
                         <ReactSVG src={PinataSVG} svgStyle={{height: '10em', width: '10em'}}/>
                     </div>
                     <div style={{fontSize: 60, fontWeight: 600}}>
-                        Pinata Hub Demo
+                        Pinata Overlay Demo
                     </div>
                     <div>
                         <ReactSVG src={PinataReverseSVG} svgStyle={{height: '10em', width: '10em'}}/>
