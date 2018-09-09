@@ -14,7 +14,7 @@ const demoProviders = [
     {
         id: 0,
         name: `Pinata Official`,
-        address: 'temporary address',
+        address: '0x0000000000000000000000000000000000001337',
         uptime: '99.99%',
         location: 'Germany',
         costPerGB: '.02 ETH',
@@ -59,7 +59,7 @@ class HomePage extends PureComponent {
             ABIInput: [],
             validABI: false,
             hash: null,
-            providersSelected: undefined
+            providersSelected: -1,
         };
 
         this.getEventsToSelect = this.getEventsToSelect.bind(this);
@@ -363,8 +363,12 @@ class HomePage extends PureComponent {
                         {this.getProviders()}
                     </Card>
                     <Icon icon={"arrow-right"} iconSize={60}/>
+
                     <Card elevation={Elevation.THREE} style={{width: 500, height: 600, marginTop: 20}}>
-                        <SubmitSection clientAddress={0} hash={this.state.hash} config={this.getConfig()}  />
+                        <SubmitSection
+                            clientAddress={this.state.providersSelected >= 0 && demoProviders[this.state.providersSelected].address}
+                            config={this.getConfig()}
+                        />
                     </Card>
                 </div>
                 <Dialog

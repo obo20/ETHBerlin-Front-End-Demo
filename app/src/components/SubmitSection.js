@@ -3,6 +3,7 @@ import Web3 from 'web3';
 import { Button } from "@blueprintjs/core";
 import contract from 'truffle-contract';
 import abi from '../abi/PinataHub.json';
+import { pinJSONToIPFS } from "../apiCalls/pinToIPFS";
 
 
 export default class SubmitSection extends React.Component {
@@ -14,6 +15,8 @@ export default class SubmitSection extends React.Component {
     isContract: false,
     loadedLogs: false,
     numLogs: 0,
+    balance: '0',
+    account: null,
   };
 
   web3 = null;
@@ -28,8 +31,18 @@ export default class SubmitSection extends React.Component {
     _PinataHub.setProvider(window.web3.currentProvider);
     this.PinataHub = await _PinataHub.deployed();
 
-    this.setState({ hasWeb3: true });
+    const [account] = await this.web3.eth.getAccounts();
+
+    this.setState({ hasWeb3: true, account });
     this.updateClientName();
+    this.updateBalance();
+  }
+
+  componentDidUpdate(prevProps){
+    if (this.props.clientAddress !== prevProps.clientAddress) {
+      this.updateClientName();
+      this.updateBalance();
+    }
   }
 
   async updateClientName() {
@@ -39,6 +52,17 @@ export default class SubmitSection extends React.Component {
     } else {
       this.setState({ clientName: '' });
     }
+  }
+
+  async pinConfigToIPFS() {
+    const response = await pinJSONToIPFS(this.props.config);
+    //this.setState({ hash: response.data.IpfsHash });
+    return response.data.IpfsHash;
+  }
+
+  async updateBalance() {
+    const balance = await this.PinataHub.getContractToClientBalance(this.state.contractAddress, this.props.clientAddress);
+    this.setState({ balance: this.web3.utils.fromWei(balance.toString(), 'ether') });
   }
 
   async changeAddress(address) {
@@ -52,6 +76,7 @@ export default class SubmitSection extends React.Component {
 
       if (isContract) {
         this.loadPastHashes();
+        this.updateBalance();
       }
     }
   }
@@ -73,12 +98,13 @@ export default class SubmitSection extends React.Component {
   }
 
   async register() {
-    const receipt = await this.PinataHub.registerContractToClient(this.props.clientAddress, this.state.contractAddress, this.props.hash);
+    const hash = await this.pinConfigToIPFS();
+    const receipt = await this.PinataHub.registerContractToClient(this.props.clientAddress, this.state.contractAddress, hash, { from: this.state.account });
     console.log(receipt);
   }
 
   render() {
-    const { isAddress, isContract, clientName, loadedLogs, numLogs } = this.state;
+    const { isAddress, isContract, clientName, loadedLogs, numLogs, balance } = this.state;
 
     if (!this.state.hasWeb3) {
       return (
@@ -94,7 +120,7 @@ export default class SubmitSection extends React.Component {
             <input
               value={this.state.contractAddress}
               onChange={e => this.changeAddress(e.target.value)}
-              disabled={!this.props.hash}
+              disabled={!this.props.clientAddress}
             />
             {isAddress && isContract ? (
               <div>
@@ -104,7 +130,6 @@ export default class SubmitSection extends React.Component {
               <div>Please enter the address for an ethereum contract</div>
             )}
           </label>
-          <div></div>
         </div>
 
         <div>
@@ -113,6 +138,19 @@ export default class SubmitSection extends React.Component {
             {clientName && clientName.length && ` with ${clientName}`}
           </Button>
         </div>
+
+        {this.props.clientAddress && (
+          <div>
+            <div>Balance: {balance} ETH</div>
+            <Button onClick={() => this.PinataHub.fundContractToClient(this.state.contractAddress, this.props.clientAddress, {
+              from: this.state.account,
+              to: this.props.clientAddress,
+              value: this.web3.utils.toWei('0.2', 'ether'),
+            }).then(() => this.updateBalance())}>
+              Top off balance
+            </Button>
+          </div>
+        )}
       </div>
     );
   }
